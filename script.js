@@ -1,7 +1,4 @@
-// move all html nodes to top
-// create function for icon
-// add validation for empty input
-// move class values as function arguments
+// removing items using cross icon and clear All button
 
 const form = document.querySelector("form#item-form");
 const itemField = document.getElementById("item-input");
@@ -19,6 +16,9 @@ function createItemDelButton(classes) {
   btn.className = classes;
   const i = createIcon("fa-solid fa-xmark");
   btn.appendChild(i);
+  btn.addEventListener("keydown", (e) =>
+    e.key === "Enter" ? e.target.firstChild.click() : null
+  );
   return btn;
 }
 
@@ -46,12 +46,20 @@ function createFilterDiv() {
   return div;
 }
 
+function deleteAllItems(e) {
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
+  }
+  deleteFilterAndClearAllButton();
+}
+
 function createClearBtn() {
   const btn = document.createElement("button");
   btn.id = "clear";
   btn.className = "btn-clear";
   const btnText = document.createTextNode("Clear All");
   btn.appendChild(btnText);
+  btn.addEventListener("click", deleteAllItems);
   return btn;
 }
 
@@ -65,10 +73,11 @@ function addItem(e) {
     alert("Item field can not be empty");
   } else {
     const li = createItem(newItem);
-    const filterDiv = createFilterDiv();
-    const clearBtn = createClearBtn();
 
+    // checking app state of no items before adding requested new item
     if (!ul.querySelector("li")) {
+      const filterDiv = createFilterDiv();
+      const clearBtn = createClearBtn();
       container.insertBefore(filterDiv, ul);
       container.appendChild(clearBtn);
     }
@@ -77,4 +86,28 @@ function addItem(e) {
   }
 }
 
+function deleteFilterAndClearAllButton() {
+  let filterField = document.querySelector("div.filter");
+  let clearButton = document.querySelector("button#clear");
+
+  filterField.remove();
+  clearButton.remove();
+}
+
+function deleteItem(e) {
+  const deleteBtn = e.target.parentElement;
+  console.log(deleteBtn.classList);
+
+  if (deleteBtn.classList.contains("remove-item")) {
+    if (window.confirm("Are you sure?")) {
+      deleteBtn.parentElement.remove();
+    }
+    // checking app state that all items are deleted
+    if (!ul.firstChild) {
+      deleteFilterAndClearAllButton();
+    }
+  }
+}
+
 form.addEventListener("submit", addItem);
+ul.addEventListener("click", deleteItem);

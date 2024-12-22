@@ -1,9 +1,31 @@
-// removing items using cross icon and clear All button
-
 const form = document.querySelector('form#item-form');
 const itemField = document.getElementById('item-input');
 const ul = document.querySelector('ul');
 const container = document.querySelector('div.container');
+
+window.addEventListener('DOMContentLoaded', initializeApp);
+
+function initializeApp() {
+	// Add event listeners
+	form.addEventListener('submit', processNewItem);
+	ul.addEventListener('click', processExistingItem);
+
+	displayStoredItems();
+}
+
+function getStoredItems() {
+	let storedItems = JSON.parse(localStorage.getItem('items'));
+	if (!storedItems) {
+		return [];
+	} else {
+		return storedItems;
+	}
+}
+
+function displayStoredItems() {
+	const items = getStoredItems();
+	items.forEach((itemName) => addItemToDOM(itemName));
+}
 
 function createIcon(classes) {
 	const i = document.createElement('i');
@@ -60,13 +82,19 @@ function createFilterDiv() {
 }
 
 function deleteAllItems(e) {
-	while (ul.firstChild) {
-		ul.removeChild(ul.firstChild);
+	if (window.confirm('All items will be deleted permanently')) {
+		(function deleteFromDOM() {
+			while (ul.firstChild) {
+				ul.removeChild(ul.firstChild);
+			}
+		})();
+		// Delete All Items From Storage
+		localStorage.removeItem('items');
+		deleteFilterAndClearAllButton();
 	}
-	deleteFilterAndClearAllButton();
 }
 
-function createClearBtn() {
+function createClearAllBtn() {
 	const btn = document.createElement('button');
 	btn.id = 'clear';
 	btn.className = 'btn-clear';
@@ -76,25 +104,37 @@ function createClearBtn() {
 	return btn;
 }
 
-function addItem(e) {
+function storeItem(newItemName) {
+	let currentItems = getStoredItems();
+
+	currentItems.push(newItemName);
+	localStorage.setItem('items', JSON.stringify(currentItems));
+}
+
+function addItemToDOM(itemName) {
+	const li = createItem(itemName);
+
+	// checking app state of no items before adding requested new item
+	if (!ul.querySelector('li')) {
+		const filterDiv = createFilterDiv();
+		const clearBtn = createClearAllBtn();
+		container.insertBefore(filterDiv, ul);
+		container.appendChild(clearBtn);
+	}
+	ul.appendChild(li);
+}
+
+function processNewItem(e) {
 	e.preventDefault();
 
 	const formData = new FormData(form);
-	const newItem = formData.get('item');
+	const newItemName = formData.get('item');
 
-	if (newItem.trim() === '') {
+	if (newItemName.trim() === '') {
 		alert('Item field can not be empty');
 	} else {
-		const li = createItem(newItem);
-
-		// checking app state of no items before adding requested new item
-		if (!ul.querySelector('li')) {
-			const filterDiv = createFilterDiv();
-			const clearBtn = createClearBtn();
-			container.insertBefore(filterDiv, ul);
-			container.appendChild(clearBtn);
-		}
-		ul.appendChild(li);
+		addItemToDOM(newItemName);
+		storeItem(newItemName);
 		itemField.value = '';
 	}
 }
@@ -107,20 +147,31 @@ function deleteFilterAndClearAllButton() {
 	clearButton.remove();
 }
 
-function deleteItem(e) {
+function deleteItemFromStorage(itemName) {
+	const savedItems = getStoredItems();
+	const itemIndex = savedItems.indexOf(itemName);
+	savedItems.splice(itemIndex, 1);
+	localStorage.setItem('items', JSON.stringify(savedItems));
+}
+
+function processItemDeletion(itemNode) {
+	const itemName = itemNode.textContent;
+	if (window.confirm(`${itemName} will be deleted from the list`)) {
+		itemNode.remove();
+		deleteItemFromStorage(itemName);
+		console.log(itemName);
+	}
+	// checking app state that all items are deleted
+	if (!ul.firstChild) {
+		deleteFilterAndClearAllButton();
+	}
+}
+
+function processExistingItem(e) {
 	const deleteBtn = e.target.parentElement;
 	console.log(deleteBtn.classList);
 
 	if (deleteBtn.classList.contains('remove-item')) {
-		if (window.confirm('Are you sure?')) {
-			deleteBtn.parentElement.remove();
-		}
-		// checking app state that all items are deleted
-		if (!ul.firstChild) {
-			deleteFilterAndClearAllButton();
-		}
+		processItemDeletion(deleteBtn.parentElement);
 	}
 }
-
-form.addEventListener('submit', addItem);
-ul.addEventListener('click', deleteItem);

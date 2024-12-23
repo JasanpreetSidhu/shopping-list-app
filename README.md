@@ -3,6 +3,7 @@
 A simple [shopping list App](https://jasanpreetsidhu.github.io/shopping-list-app/) that allows you to create and save a list of shopping items. Made dynamically using vanilla JavaScript.
 
 Features:
+
 1. creates a shopping list
 2. saves a shopping list on your browser to view it anytime
 3. search through items in your shopping list
@@ -11,7 +12,11 @@ Features:
 6. intuitive dynamic interface
 
 Technologies used:
-* HTML
-* CSS
-* Javascript
-* font-awesome
+
+- HTML
+- CSS
+- Javascript
+- font-awesome
+
+Images
+[App at start](https://github.com/JasanpreetSidhu/shopping-list-app/images/appUI/start.jpeg)

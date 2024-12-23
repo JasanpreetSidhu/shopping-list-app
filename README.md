@@ -1,6 +1,6 @@
 # Shopping List App
 
-A simple shopping list App that allows you to create and save a list of shopping items. Made dynamically using vanilla JavaScript.
+A simple [shopping list App](https://jasanpreetsidhu.github.io/shopping-list-app/) that allows you to create and save a list of shopping items. Made dynamically using vanilla JavaScript.
 
 Features:
 1. creates a shopping list

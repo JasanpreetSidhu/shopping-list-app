@@ -36,7 +36,7 @@ function processForm(e) {
 	switch (appState) {
 		case states.EDIT:
 			const itemEditing = ul.querySelector('li.inEditState');
-			const itemAlreadyExists = checkItemInStoredItems(itemEditing.textContent);
+			const itemAlreadyExists = checkItemInStoredItems(itemField.value);
 			if (!itemAlreadyExists) {
 				processItemDeletion(itemEditing);
 				processNewItem(e);

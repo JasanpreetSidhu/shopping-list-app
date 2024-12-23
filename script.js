@@ -2,15 +2,61 @@ const form = document.querySelector('form#item-form');
 const itemField = document.getElementById('item-input');
 const ul = document.querySelector('ul');
 const container = document.querySelector('div.container');
+const states = { ADD: 'add item', EDIT: 'edit item' };
+let appState = states.ADD;
 
 window.addEventListener('DOMContentLoaded', initializeApp);
 
 function initializeApp() {
 	// Add event listeners
-	form.addEventListener('submit', processNewItem);
+	form.addEventListener('submit', processForm);
 	ul.addEventListener('click', processExistingItem);
-
+	// add localstorage items to DOM
 	displayStoredItems();
+}
+
+function resetAppState() {
+	if (appState === states.EDIT) {
+		appState = states.ADD;
+		const updateButton = form.querySelector('#update-button');
+		const addButton = createAddButton();
+		updateButton.replaceWith(addButton);
+		ul.querySelectorAll('li').forEach((li) =>
+			li.classList.remove('inEditState')
+		);
+		form.querySelector('#cancel-button').remove();
+		itemField.value = '';
+	}
+}
+
+function processForm(e) {
+	e.preventDefault();
+	switch (appState) {
+		case states.EDIT:
+			const itemEditing = ul.querySelector('li.inEditState');
+			processItemDeletion(itemEditing);
+			processNewItem(e);
+			resetAppState();
+			break;
+
+		default:
+			processNewItem();
+			break;
+	}
+}
+
+function createAddButton() {
+	const button = document.createElement('button');
+	button.setAttribute('type', 'submit');
+	button.id = 'add-button';
+	button.classList.add('btn');
+	const addIcon = document.createElement('i');
+	addIcon.className = 'fa-solid fa-plus';
+	button.appendChild(addIcon);
+	const text = document.createTextNode('  Add Item');
+	button.appendChild(text);
+	button.style.backgroundColor = 'black';
+	return button;
 }
 
 function getStoredItems() {
@@ -82,6 +128,7 @@ function createFilterDiv() {
 }
 
 function deleteAllItems(e) {
+	resetAppState();
 	if (window.confirm('All items will be deleted permanently')) {
 		(function deleteFromDOM() {
 			while (ul.firstChild) {
@@ -125,8 +172,6 @@ function addItemToDOM(itemName) {
 }
 
 function processNewItem(e) {
-	e.preventDefault();
-
 	const formData = new FormData(form);
 	const newItemName = formData.get('item');
 
@@ -156,7 +201,10 @@ function deleteItemFromStorage(itemName) {
 
 function processItemDeletion(itemNode) {
 	const itemName = itemNode.textContent;
-	if (window.confirm(`${itemName} will be deleted from the list`)) {
+	if (
+		appState === states.EDIT ||
+		window.confirm(`${itemName} will be deleted from the list`)
+	) {
 		itemNode.remove();
 		deleteItemFromStorage(itemName);
 		console.log(itemName);
@@ -167,11 +215,51 @@ function processItemDeletion(itemNode) {
 	}
 }
 
+function createUpdateButton() {
+	const updateButton = document.createElement('button');
+	updateButton.setAttribute('type', 'submit');
+	updateButton.id = 'update-button';
+	updateButton.classList.add('btn');
+	const updateIcon = document.createElement('i');
+	updateIcon.className = 'fas fa-edit';
+	updateButton.appendChild(updateIcon);
+	const text = document.createTextNode('  Update Item');
+	updateButton.appendChild(text);
+	updateButton.style.backgroundColor = '#1974D2';
+	return updateButton;
+}
+
+function createCancelButton() {
+	const button = document.createElement('button');
+	button.setAttribute('type', 'reset');
+	button.id = 'cancel-button';
+	button.classList.add('btn');
+	const text = document.createTextNode('Cancel');
+	button.appendChild(text);
+	button.style.backgroundColor = 'black';
+	button.addEventListener('click', resetAppState);
+	return button;
+}
+
+function changeAppToEditState(liNodeToEdit) {
+	appState = states.EDIT;
+	console.log(liNodeToEdit);
+	liNodeToEdit.classList.add('inEditState');
+	itemField.value = liNodeToEdit.textContent;
+	const addItemButton = form.querySelector('#add-button');
+	const updateButton = createUpdateButton();
+	addItemButton.replaceWith(updateButton);
+	const cancelButton = createCancelButton();
+	form.querySelector('.buttons').appendChild(cancelButton);
+}
+
 function processExistingItem(e) {
 	const deleteBtn = e.target.parentElement;
 	console.log(deleteBtn.classList);
-
+	resetAppState();
 	if (deleteBtn.classList.contains('remove-item')) {
 		processItemDeletion(deleteBtn.parentElement);
+	} else if (e.target.tagName === 'LI') {
+		changeAppToEditState(e.target);
 	}
 }

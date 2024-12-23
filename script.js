@@ -26,6 +26,8 @@ function resetAppState() {
 		);
 		form.querySelector('#cancel-button').remove();
 		itemField.value = '';
+	} else {
+		itemField.value = '';
 	}
 }
 
@@ -34,8 +36,11 @@ function processForm(e) {
 	switch (appState) {
 		case states.EDIT:
 			const itemEditing = ul.querySelector('li.inEditState');
-			processItemDeletion(itemEditing);
-			processNewItem(e);
+			const itemAlreadyExists = checkItemInStoredItems(itemEditing.textContent);
+			if (!itemAlreadyExists) {
+				processItemDeletion(itemEditing);
+				processNewItem(e);
+			}
 			resetAppState();
 			break;
 
@@ -171,6 +176,12 @@ function addItemToDOM(itemName) {
 	ul.appendChild(li);
 }
 
+function checkItemInStoredItems(newItemName) {
+	console.log('dfddf');
+	console.log(getStoredItems());
+	return getStoredItems().includes(newItemName);
+}
+
 function processNewItem(e) {
 	const formData = new FormData(form);
 	const newItemName = formData.get('item');
@@ -178,9 +189,14 @@ function processNewItem(e) {
 	if (newItemName.trim() === '') {
 		alert('Item field can not be empty');
 	} else {
-		addItemToDOM(newItemName);
-		storeItem(newItemName);
-		itemField.value = '';
+		const itemAlreadyExists = checkItemInStoredItems(newItemName);
+		if (itemAlreadyExists) {
+			alert('Item already exists in the list');
+		} else {
+			addItemToDOM(newItemName);
+			storeItem(newItemName);
+		}
+		resetAppState();
 	}
 }
 

@@ -18,5 +18,51 @@ Technologies used:
 - Javascript
 - font-awesome
 
-Images
-[App at start](https://github.com/JasanpreetSidhu/shopping-list-app/images/appUI/start.jpeg)
+
+
+<table>
+  <tr>
+    <td>
+      <figure>
+        <figcaption>App at start</figcaption>
+        <img src="images/appUI/start.jpeg" alt="app UI Image">
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <figcaption>After adding items</figcaption>
+        <img src="images/appUI/afterAddingItems.jpeg" alt="app UI Image">
+      </figure>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <figure>
+        <figcaption>Updating items</figcaption>
+        <img src="images/appUI/updateItems.jpeg" alt="app UI Image">
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <figcaption>Filtering items</figcaption>
+        <img src="images/appUI/filteringItems.jpeg" alt="app UI Image">
+      </figure>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <figure>
+        <figcaption>Deleting a single item</figcaption>
+        <img src="images/appUI/deletingSingleItem.png" alt="app UI Image">
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <figcaption>Deleting all items</figcaption>
+        <img src="images/appUI/deletingAllItems.png" alt="app UI Image">
+      </figure>
+    </td>
+  </tr>
+</table>
+
+

@@ -101,7 +101,6 @@ function createItem(name) {
 	li.appendChild(liText);
 	btn = createItemDelButton('remove-item btn-link text-red');
 	li.appendChild(btn);
-	console.log(li);
 	return li;
 }
 
@@ -177,8 +176,6 @@ function addItemToDOM(itemName) {
 }
 
 function checkItemInStoredItems(newItemName) {
-	console.log('dfddf');
-	console.log(getStoredItems());
 	return getStoredItems().includes(newItemName);
 }
 
@@ -223,7 +220,6 @@ function processItemDeletion(itemNode) {
 	) {
 		itemNode.remove();
 		deleteItemFromStorage(itemName);
-		console.log(itemName);
 	}
 	// checking app state that all items are deleted
 	if (!ul.firstChild) {
@@ -259,7 +255,6 @@ function createCancelButton() {
 
 function changeAppToEditState(liNodeToEdit) {
 	appState = states.EDIT;
-	console.log(liNodeToEdit);
 	liNodeToEdit.classList.add('inEditState');
 	itemField.value = liNodeToEdit.textContent;
 	const addItemButton = form.querySelector('#add-button');
@@ -271,7 +266,6 @@ function changeAppToEditState(liNodeToEdit) {
 
 function processExistingItem(e) {
 	const deleteBtn = e.target.parentElement;
-	console.log(deleteBtn.classList);
 	resetAppState();
 	if (deleteBtn.classList.contains('remove-item')) {
 		processItemDeletion(deleteBtn.parentElement);
